@@ -628,6 +628,6 @@ Longest topological path in chronos_log_zoh_unit (length=39):
      $memrd_v2                       2
 
 Warnings: 6 unique messages, 6 total
-End of script. Logfile hash: b5b912761e, CPU: user 0.28s system 0.01s, MEM: 26.10 MB peak
+End of script. Logfile hash: b5b912761e, CPU: user 0.29s system 0.01s, MEM: 26.12 MB peak
 Yosys 0.33 (git sha1 2584903a060)
 Time spent: 28% 1x techmap (0 sec), 27% 17x opt_expr (0 sec), ...

@@ -26,10 +26,10 @@
   chronos_lod_s16 Gate Cells / LTP                     : 276 cells / 28 levels
   chronos_lod_u8 Gate Cells / LTP                      : 90 cells / 12 levels
   chronos_pwl_nonlinear Gate Cells / LTP               : 628 cells / 49 levels
-  chronos_ssm_core_1lane (Engine B) LOD8 Instances     : 6 instances
-  chronos_ssm_core_1lane (Engine B) Local Gate Cells   : 7,055 cells
-  chronos_ssm_core_1lane (Engine B) Total Gate Cells   : 7,055 cells
-  chronos_soc_top Full-SoC RTL Primitives ($mul count) : 7,175 cells (0-DSP Verified: True)
+  chronos_ssm_core_1lane (Engine B) LOD8 Instances     : 4 instances
+  chronos_ssm_core_1lane (Engine B) Local Gate Cells   : 6,826 cells
+  chronos_ssm_core_1lane (Engine B) Total Gate Cells   : 6,826 cells
+  chronos_soc_top Full-SoC RTL Primitives ($mul count) : 7,135 cells (0-DSP Verified: True)
   Reference Linear INT16/8 Mamba Core Gate Cells / LTP : 5,682 cells / 359 levels (6x MUL)
   ----------------------------------------------------------------------------
 

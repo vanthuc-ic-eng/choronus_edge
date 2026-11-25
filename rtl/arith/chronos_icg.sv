@@ -23,6 +23,13 @@ module chronos_icg (
         .GATE ( en_i | test_en_i ),
         .GCLK ( clk_o            )
     );
+`elsif TARGET_XILINX_FPGA
+    // Xilinx 7-Series / UltraScale dedicated global clock buffer with clock-enable
+    BUFGCE u_xilinx_bufgce (
+        .I  ( clk_i            ),
+        .CE ( en_i | test_en_i ),
+        .O  ( clk_o            )
+    );
 `elsif SYNTHESIS_FPGA_NO_GATED_CLK
     // FPGA-safe mode: pass clock un-gated (logic uses CE ports directly)
     wire _unused_ok = &{1'b0, en_i, test_en_i};

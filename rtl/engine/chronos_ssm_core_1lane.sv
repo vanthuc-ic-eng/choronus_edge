@@ -105,32 +105,15 @@ module chronos_ssm_core_1lane #(
     //       Δ (Q2.6 -> raw*2^-6) * B (Q1.6 -> raw*2^-6) * x (Q4.4 -> raw*2^-4)
     //       Product raw has total fractional shift 2^-16; target h is Q5.10 (2^-10)
     //       => Net exponent offset = -6 (i.e. -384 in Q5.6)!
-    logic       d_sign_unused, d_zero;
-    logic [8:0] d_log_q3_6;
+    //     ★ v1.2.0 Area Optimization: Share the exact unsigned 8-bit Δ log2 encoder
+    //        directly with u_log_zoh.delta_log_q3_6 (eliminates redundant u_lod_delta!)
     logic       b_sign, b_zero;
     logic [8:0] b_log_q3_6;
     logic       x_sign, x_zero;
     logic [8:0] x_log_q3_6;
+    logic [8:0] delta_log_exact;
 
-    // Unsigned delta_q2_6 -> encode top 7 bits or exact 8-bit via helper
-    // Note: chronos_lod_u8 expects signed INT8; for unsigned 8-bit delta (0..255),
-    // encode positive half cleanly via shift if MSB=1 (bit 7 = 128..255 -> k=7!)
-    logic signed [7:0] delta_s8_half;
-    logic              delta_msb;
-    logic [8:0]        delta_log_exact;
-
-    assign delta_msb     = delta_q2_6_i[7];
-    assign delta_s8_half = delta_msb ? $signed({1'b0, delta_q2_6_i[7:1]}) : $signed(delta_q2_6_i);
-
-    chronos_lod_u8 u_lod_delta (
-        .data_i ( delta_s8_half ),
-        .sign_o ( d_sign_unused ),
-        .zero_o ( d_zero        ),
-        .log_o  ( d_log_q3_6    )
-    );
-    // If MSB was 1, we divided by 2 before encoding -> add +1.0 (+64 in Q3.6)!
-    assign delta_log_exact = (delta_q2_6_i == 8'd0) ? 9'd0 :
-                             (delta_msb ? (d_log_q3_6 + 9'd64) : d_log_q3_6);
+    assign delta_log_exact = u_log_zoh.delta_log_q3_6;
 
     chronos_lod_u8 u_lod_b (
         .data_i ( b_s8_i     ),
@@ -178,7 +161,7 @@ module chronos_ssm_core_1lane #(
     );
 
     // Suppress unused helper signals cleanly
-    wire _unused_s1 = &{1'b0, d_sign_unused, d_zero, s1_sp_unused};
+    wire _unused_s1 = &{1'b0, s1_sp_unused};
 
     // -------------------- Pipeline Register S1 -> S2 ------------------------
     logic                    s1_valid_q;
@@ -194,7 +177,9 @@ module chronos_ssm_core_1lane #(
     logic signed [10:0]      s1_bx_log_q;
     logic signed [7:0]       s1_c_q;
     logic signed [7:0]       s1_d_skip_q;
-    logic signed [7:0]       s1_x_q;
+    logic                    s1_x_sign_q;
+    logic                    s1_x_zero_q;
+    logic        [8:0]       s1_x_log_q;
     logic signed [7:0]       s1_silu_z_q;
 
     always_ff @(posedge clk_gated or negedge rst_ni) begin
@@ -212,7 +197,9 @@ module chronos_ssm_core_1lane #(
             s1_bx_log_q    <= 11'sd0;
             s1_c_q         <= 8'sd0;
             s1_d_skip_q    <= 8'sd0;
-            s1_x_q         <= 8'sd0;
+            s1_x_sign_q    <= 1'b0;
+            s1_x_zero_q    <= 1'b1;
+            s1_x_log_q     <= 9'd0;
             s1_silu_z_q    <= 8'sd0;
         end else begin
             s1_valid_q     <= valid_i;
@@ -228,7 +215,9 @@ module chronos_ssm_core_1lane #(
             s1_bx_log_q    <= s1_bx_log;
             s1_c_q         <= c_s8_i;
             s1_d_skip_q    <= d_skip_s8_i;
-            s1_x_q         <= x_s8_i;
+            s1_x_sign_q    <= x_sign;
+            s1_x_zero_q    <= x_zero;
+            s1_x_log_q     <= x_log_q3_6;
             s1_silu_z_q    <= s1_silu_z_q4_4;
         end
     end
@@ -340,7 +329,9 @@ module chronos_ssm_core_1lane #(
     logic signed [15:0] s2_h_new_q;
     logic signed [7:0]  s2_c_q;
     logic signed [7:0]  s2_d_skip_q;
-    logic signed [7:0]  s2_x_q;
+    logic               s2_x_sign_q;
+    logic               s2_x_zero_q;
+    logic        [8:0]  s2_x_log_q;
     logic signed [7:0]  s2_silu_z_q;
 
     always_ff @(posedge clk_gated or negedge rst_ni) begin
@@ -352,7 +343,9 @@ module chronos_ssm_core_1lane #(
             s2_h_new_q   <= 16'sd0;
             s2_c_q       <= 8'sd0;
             s2_d_skip_q  <= 8'sd0;
-            s2_x_q       <= 8'sd0;
+            s2_x_sign_q  <= 1'b0;
+            s2_x_zero_q  <= 1'b1;
+            s2_x_log_q   <= 9'd0;
             s2_silu_z_q  <= 8'sd0;
         end else begin
             s2_valid_q   <= s1_valid_q;
@@ -362,7 +355,9 @@ module chronos_ssm_core_1lane #(
             s2_h_new_q   <= s2_h_new_clamped;
             s2_c_q       <= s1_c_q;
             s2_d_skip_q  <= s1_d_skip_q;
-            s2_x_q       <= s1_x_q;
+            s2_x_sign_q  <= s1_x_sign_q;
+            s2_x_zero_q  <= s1_x_zero_q;
+            s2_x_log_q   <= s1_x_log_q;
             s2_silu_z_q  <= s1_silu_z_q;
         end
     end
@@ -435,24 +430,23 @@ module chronos_ssm_core_1lane #(
     );
 
     // Optional Skip Connection D_d * x_d (Zero-DSP Log Mul, Q4.4 * Q4.4 -> Q5.10 => shift +2 = +128)
-    logic        d_sk_sign, d_sk_zero, x_sk_sign, x_sk_zero;
-    logic [8:0]  d_sk_log, x_sk_log;
+    // ★ v1.2.0 Area Optimization: Reuses pipelined {s2_x_sign_q, s2_x_zero_q, s2_x_log_q}
+    //   computed by u_lod_x in Stage 1 (eliminates redundant u_lod_x_skip in Stage 3!)
+    logic        d_sk_sign, d_sk_zero;
+    logic [8:0]  d_sk_log;
     logic signed [10:0] dx_log;
     logic signed [15:0] dx_lin_q5_10;
 
     chronos_lod_u8 u_lod_d_skip (
         .data_i ( s2_d_skip_q ), .sign_o ( d_sk_sign ), .zero_o ( d_sk_zero ), .log_o ( d_sk_log )
     );
-    chronos_lod_u8 u_lod_x_skip (
-        .data_i ( s2_x_q      ), .sign_o ( x_sk_sign ), .zero_o ( x_sk_zero ), .log_o ( x_sk_log )
-    );
-    assign dx_log = $signed({2'b00, d_sk_log}) + $signed({2'b00, x_sk_log}) + 11'sd128; // +2.0 (Q4.4*Q4.4=Q8->Q10)
+    assign dx_log = $signed({2'b00, d_sk_log}) + $signed({2'b00, s2_x_log_q}) + 11'sd128; // +2.0 (Q4.4*Q4.4=Q8->Q10)
 
     chronos_log_antilog_s16 u_antilog_dx (
-        .sign_i    ( d_sk_sign ^ x_sk_sign ),
-        .zero_i    ( d_sk_zero | x_sk_zero ),
-        .log_val_i ( dx_log                ),
-        .lin_o     ( dx_lin_q5_10          )
+        .sign_i    ( d_sk_sign ^ s2_x_sign_q ),
+        .zero_i    ( d_sk_zero | s2_x_zero_q ),
+        .log_val_i ( dx_log                  ),
+        .lin_o     ( dx_lin_q5_10            )
     );
 
     // Accumulate y_d across n = 0..N-1 and Latch Gated Output
