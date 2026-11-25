@@ -58,6 +58,7 @@ module tb_ssm_core_drift;
         .n_first_i    ( n_first_i    ),
         .n_last_i     ( n_last_i     ),
         .lyap_guard_i ( lyap_guard_i ),
+        .coalesce_log_q3_6_i ( 9'd0  ),
         .state_addr_i ( state_addr_i ),
         .h_prev_i     ( h_prev       ),
         .delta_q2_6_i ( delta_i      ),

@@ -80,7 +80,9 @@ module chronos_ssm_hwpe_top #(
     localparam int unsigned R_ADDR_W = $clog2(RING_DEPTH);
 
     logic        start_pulse, stream_en, state_rst_pulse;
-    logic        step_skip_en, chan_skip_en, mode_s6, lyap_guard_en;
+    logic        step_skip_en, chan_skip_en, mode_s6, lyap_guard_en, rr_coalesce_en;
+    logic [1:0]  cfg_num_layers;
+    logic [8:0]  eng_b_coalesce_log;
     logic [7:0]  cfg_d_model, cfg_n_state, cfg_d_in, cfg_num_cls;
     logic [15:0] cfg_seq_len, step_idx;
     logic [7:0]  cfg_tau_chan, cfg_tau_step;
@@ -178,6 +180,8 @@ module chronos_ssm_hwpe_top #(
         .chan_skip_en_o      ( chan_skip_en        ),
         .mode_s6_o           ( mode_s6             ),
         .lyap_guard_en_o     ( lyap_guard_en       ),
+        .rr_coalesce_en_o    ( rr_coalesce_en      ),
+        .cfg_num_layers_o    ( cfg_num_layers      ),
         .cfg_d_model_o       ( cfg_d_model         ),
         .cfg_n_state_o       ( cfg_n_state         ),
         .cfg_d_in_o          ( cfg_d_in            ),
@@ -340,7 +344,8 @@ module chronos_ssm_hwpe_top #(
         .cg_en_i      ( eng_b_cg_en          ), .test_en_i    ( test_en_i            ),
         .valid_i      ( eng_b_valid          ), .submode_i    ( eng_b_submode        ),
         .n_first_i    ( eng_b_n_first        ), .n_last_i     ( eng_b_n_last         ),
-        .lyap_guard_i ( lyap_guard_en        ), .state_addr_i ( eng_b_state_addr     ),
+        .lyap_guard_i ( lyap_guard_en        ), .coalesce_log_q3_6_i ( eng_b_coalesce_log ),
+        .state_addr_i ( eng_b_state_addr     ),
         .h_prev_i     ( h_prev_a             ), .delta_q2_6_i ( eng_b_delta          ),
         .a_log_q3_6_i ( a_log_q3_6           ), .a_zero_i     ( a_zero               ),
         .b_s8_i       ( eng_b_b              ), .c_s8_i       ( eng_b_c              ),
@@ -372,6 +377,7 @@ module chronos_ssm_hwpe_top #(
     ) u_agu (
         .clk_i               ( clk_i             ), .rst_ni             ( rst_ni            ),
         .start_pulse_i       ( start_pulse       ), .mode_s6_i          ( mode_s6           ),
+        .rr_coalesce_en_i    ( rr_coalesce_en    ), .cfg_num_layers_i   ( cfg_num_layers    ),
         .cfg_d_model_i       ( cfg_d_model       ), .cfg_n_state_i      ( cfg_n_state       ),
         .cfg_d_in_i          ( cfg_d_in          ), .cfg_num_cls_i      ( cfg_num_cls       ),
         .cfg_seq_len_i       ( cfg_seq_len       ), .fsm_state_o        ( fsm_state         ),
@@ -406,7 +412,8 @@ module chronos_ssm_hwpe_top #(
         .chan_skip_i         ( chan_skip         ), .eng_b_cg_en_o      ( eng_b_cg_en       ),
         .eng_b_valid_o       ( eng_b_valid       ), .eng_b_submode_o    ( eng_b_submode     ),
         .eng_b_n_first_o     ( eng_b_n_first     ), .eng_b_n_last_o     ( eng_b_n_last      ),
-        .eng_b_state_addr_o  ( eng_b_state_addr  ), .eng_b_delta_o      ( eng_b_delta       ),
+        .eng_b_coalesce_log_o( eng_b_coalesce_log), .eng_b_state_addr_o ( eng_b_state_addr  ),
+        .eng_b_delta_o       ( eng_b_delta       ),
         .eng_b_b_o           ( eng_b_b           ), .eng_b_c_o          ( eng_b_c           ),
         .eng_b_x_o           ( eng_b_x           ), .eng_b_d_skip_o     ( eng_b_d_skip      ),
         .eng_b_z_o           ( eng_b_z           ), .eng_b_out_valid_i  ( eng_b_out_valid   ),

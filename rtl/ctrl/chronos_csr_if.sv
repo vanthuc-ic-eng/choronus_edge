@@ -26,6 +26,8 @@ module chronos_csr_if (
     output logic        chan_skip_en_o,
     output logic        mode_s6_o,          // 0 = Static S4D, 1 = Selective Mamba
     output logic        lyap_guard_en_o,    // 1 = Enforce spectral stability clamp
+    output logic        rr_coalesce_en_o,   // ★ v1.3.0: [8] Coalesced Multi-Step Log-ZOH Decay for RR-interval
+    output logic [1:0]  cfg_num_layers_o,   // ★ v1.3.0: [11:10] Time-multiplexed Mamba layers (1..3)
     output logic [7:0]  cfg_d_model_o,
     output logic [7:0]  cfg_n_state_o,
     output logic [7:0]  cfg_d_in_o,
@@ -68,6 +70,8 @@ module chronos_csr_if (
             chan_skip_en_o    <= 1'b0;
             mode_s6_o         <= 1'b1;      // Default: Selective Mamba
             lyap_guard_en_o   <= 1'b1;      // Default: Lyapunov Guard ON
+            rr_coalesce_en_o  <= 1'b0;      // Default: Standard single-step (1 = Coalesced RR-interval)
+            cfg_num_layers_o  <= 2'd1;      // Default: 1 layer (supports 1..3 time-multiplexed layers)
             cfg_d_model_o     <= 8'd16;
             cfg_n_state_o     <= 8'd4;
             cfg_d_in_o        <= 8'd8;
@@ -107,6 +111,8 @@ module chronos_csr_if (
                         mode_s6_o         <= csr_wdata_i[5];
                         lyap_guard_en_o   <= csr_wdata_i[6];
                         chan_skip_en_o    <= csr_wdata_i[7];
+                        rr_coalesce_en_o  <= csr_wdata_i[8];
+                        cfg_num_layers_o  <= (csr_wdata_i[11:10] == 2'd0) ? 2'd1 : csr_wdata_i[11:10];
                     end
                     chronos_pkg::CSR_SSM_CFG: begin
                         cfg_d_model_o <= csr_wdata_i[7:0];
@@ -138,7 +144,8 @@ module chronos_csr_if (
     always_comb begin
         case (csr_addr_i)
             chronos_pkg::CSR_CTRL:
-                csr_rdata_o = {24'd0, chan_skip_en_o, lyap_guard_en_o, mode_s6_o,
+                csr_rdata_o = {20'd0, cfg_num_layers_o, 1'b0, rr_coalesce_en_o,
+                               chan_skip_en_o, lyap_guard_en_o, mode_s6_o,
                                step_skip_en_o, 1'b0, stream_en_o, done_sticky_q, 1'b0};
             chronos_pkg::CSR_STATUS:
                 csr_rdata_o = {26'd0, busy_i, ring_full_i, irq_pending_q, fsm_state_i};

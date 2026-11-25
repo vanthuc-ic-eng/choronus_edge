@@ -63,14 +63,16 @@ module tb_arith_units;
     logic [8:0] zoh_a_log;
     logic       zoh_a_zero;
     logic       zoh_lyap;
+    logic [8:0] zoh_coalesce_log = 9'd0;
     logic [9:0] zoh_decay;
 
     chronos_log_zoh_unit u_zoh (
-        .delta_q2_6_i ( zoh_delta  ),
-        .a_log_q3_6_i ( zoh_a_log  ),
-        .a_zero_i     ( zoh_a_zero ),
-        .lyap_guard_i ( zoh_lyap   ),
-        .decay_log2_o ( zoh_decay  )
+        .delta_q2_6_i        ( zoh_delta        ),
+        .a_log_q3_6_i        ( zoh_a_log        ),
+        .a_zero_i            ( zoh_a_zero       ),
+        .lyap_guard_i        ( zoh_lyap         ),
+        .coalesce_log_q3_6_i ( zoh_coalesce_log ),
+        .decay_log2_o        ( zoh_decay        )
     );
 
     // DUT 4: PWL Non-Linearity (SiLU & Softplus)
@@ -219,6 +221,23 @@ module tb_arith_units;
         end else begin
             $display("[TEST 3b] Lyapunov Spectral Guard : PASS (decay_log2=%0d >= 1 when delta=0)", zoh_decay);
         end
+
+        // Check v1.3.0 Coalesced Multi-Step RR-Interval Decay (K_skip = 3 -> 4x step decay in 1 cycle!)
+        zoh_delta = 8'd16; // d_r = 0.25
+        zoh_a_log = encode_a_q4_4_log(1.0); // a_r = 1.0
+        zoh_coalesce_log = 9'd128; // log2(1 + 3) = +2.0 in Q3.6 (128)
+        #1;
+        decay_r = $itor(zoh_decay) / 64.0;
+        hw_val  = 2.0 ** (-decay_r);
+        ref_val = $exp(-4.0 * 0.25 * 1.0); // exp(-1.0) = 0.367879
+        err     = (hw_val > ref_val) ? (hw_val - ref_val) : (ref_val - hw_val);
+        $display("[TEST 3c] Coalesced RR Decay (K=3): FP64 exp(-4*dA)=%.4f, HW=%.4f (Err=%.4f)",
+                 ref_val, hw_val, err);
+        if (err > 0.01) begin
+            $display("[FAIL] Coalesced RR-Interval Decay error exceeded 0.01!");
+            errors++;
+        end
+        zoh_coalesce_log = 9'd0;
 
         // --------------------------------------------------------------------
         // TEST 4: PWL Non-Linearity (All 256 SiLU & Softplus values vs FP64)

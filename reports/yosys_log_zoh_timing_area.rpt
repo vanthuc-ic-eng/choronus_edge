@@ -97,7 +97,7 @@ Removed 6 unused modules.
 Cleaned up 0 empty switches.
 
 11.2. Executing PROC_RMDEAD pass (remove dead branches from decision trees).
-Marked 3 switch rules as full_case in process $proc$rtl/arith/chronos_log_zoh_unit.sv:0$132 in module chronos_log_zoh_unit.
+Marked 3 switch rules as full_case in process $proc$rtl/arith/chronos_log_zoh_unit.sv:0$133 in module chronos_log_zoh_unit.
 Removed 1 dead cases from process $proc$rtl/arith/chronos_log_zoh_unit.sv:0$126 in module chronos_log_zoh_unit.
 Marked 1 switch rules as full_case in process $proc$rtl/arith/chronos_log_zoh_unit.sv:0$126 in module chronos_log_zoh_unit.
 Marked 7 switch rules as full_case in process $proc$rtl/arith/chronos_log_zoh_unit.sv:0$125 in module chronos_log_zoh_unit.
@@ -119,7 +119,7 @@ Converted 2 switches.
 <suppressed ~17 debug messages>
 
 11.7. Executing PROC_MUX pass (convert decision trees to multiplexers).
-Creating decoders for process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$132'.
+Creating decoders for process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$133'.
      1/3: $3\decay_log2_o[9:0]
      2/3: $2\decay_log2_o[9:0]
      3/3: $1\decay_log2_o[9:0]
@@ -157,7 +157,7 @@ Creating decoders for process `\chronos_log_antilog_s16.$proc$rtl/arith/chronos_
      1/1: $1\exp2_frac_lut[7:0]
 
 11.8. Executing PROC_DLATCH pass (convert process syncs to latches).
-No latch inferred for signal `\chronos_log_zoh_unit.\decay_log2_o' from process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$132'.
+No latch inferred for signal `\chronos_log_zoh_unit.\decay_log2_o' from process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$133'.
 No latch inferred for signal `\chronos_log_zoh_unit.\d_lut_frac' from process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$126'.
 No latch inferred for signal `\chronos_log_zoh_unit.\d_exp' from process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$125'.
 No latch inferred for signal `\chronos_log_zoh_unit.\d_raw_mant' from process `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$125'.
@@ -171,8 +171,8 @@ No latch inferred for signal `\chronos_log_antilog_s16.\exp2_frac_lut' from proc
 11.10. Executing PROC_MEMWR pass (convert process memory writes to cells).
 
 11.11. Executing PROC_CLEAN pass (remove empty switches from decision trees).
-Found and cleaned up 3 empty switches in `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$132'.
-Removing empty process `chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$132'.
+Found and cleaned up 3 empty switches in `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$133'.
+Removing empty process `chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$133'.
 Found and cleaned up 1 empty switch in `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$126'.
 Removing empty process `chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$126'.
 Found and cleaned up 7 empty switches in `\chronos_log_zoh_unit.$proc$rtl/arith/chronos_log_zoh_unit.sv:0$125'.
@@ -206,76 +206,76 @@ Running muxtree optimizer on module \chronos_log_zoh_unit..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
   Analyzing evaluation results.
-    dead port 1/2 on $mux $procmux$414.
-    dead port 1/2 on $mux $procmux$408.
-    dead port 1/2 on $mux $procmux$402.
-    dead port 1/2 on $mux $procmux$399.
-    dead port 1/2 on $mux $procmux$393.
-    dead port 1/2 on $mux $procmux$390.
-    dead port 1/2 on $mux $procmux$384.
-    dead port 1/2 on $mux $procmux$381.
-    dead port 1/2 on $mux $procmux$378.
-    dead port 1/2 on $mux $procmux$372.
-    dead port 1/2 on $mux $procmux$369.
-    dead port 1/2 on $mux $procmux$366.
-    dead port 1/2 on $mux $procmux$360.
-    dead port 1/2 on $mux $procmux$357.
-    dead port 1/2 on $mux $procmux$354.
-    dead port 1/2 on $mux $procmux$351.
-    dead port 1/2 on $mux $procmux$345.
-    dead port 1/2 on $mux $procmux$342.
-    dead port 1/2 on $mux $procmux$339.
-    dead port 1/2 on $mux $procmux$336.
-    dead port 1/2 on $mux $procmux$330.
-    dead port 1/2 on $mux $procmux$327.
-    dead port 1/2 on $mux $procmux$324.
-    dead port 1/2 on $mux $procmux$321.
-    dead port 1/2 on $mux $procmux$318.
-    dead port 1/2 on $mux $procmux$312.
-    dead port 1/2 on $mux $procmux$309.
-    dead port 1/2 on $mux $procmux$306.
-    dead port 1/2 on $mux $procmux$303.
-    dead port 1/2 on $mux $procmux$300.
-    dead port 1/2 on $mux $procmux$294.
-    dead port 1/2 on $mux $procmux$291.
-    dead port 1/2 on $mux $procmux$288.
-    dead port 1/2 on $mux $procmux$285.
-    dead port 1/2 on $mux $procmux$282.
-    dead port 1/2 on $mux $procmux$279.
-    dead port 1/2 on $mux $procmux$273.
-    dead port 1/2 on $mux $procmux$270.
-    dead port 1/2 on $mux $procmux$267.
-    dead port 1/2 on $mux $procmux$264.
-    dead port 1/2 on $mux $procmux$261.
-    dead port 1/2 on $mux $procmux$258.
-    dead port 1/2 on $mux $procmux$248.
-    dead port 1/2 on $mux $procmux$242.
-    dead port 1/2 on $mux $procmux$239.
+    dead port 1/2 on $mux $procmux$415.
+    dead port 1/2 on $mux $procmux$409.
+    dead port 1/2 on $mux $procmux$403.
+    dead port 1/2 on $mux $procmux$400.
+    dead port 1/2 on $mux $procmux$394.
+    dead port 1/2 on $mux $procmux$391.
+    dead port 1/2 on $mux $procmux$385.
+    dead port 1/2 on $mux $procmux$382.
+    dead port 1/2 on $mux $procmux$379.
+    dead port 1/2 on $mux $procmux$373.
+    dead port 1/2 on $mux $procmux$370.
+    dead port 1/2 on $mux $procmux$367.
+    dead port 1/2 on $mux $procmux$361.
+    dead port 1/2 on $mux $procmux$358.
+    dead port 1/2 on $mux $procmux$355.
+    dead port 1/2 on $mux $procmux$352.
+    dead port 1/2 on $mux $procmux$346.
+    dead port 1/2 on $mux $procmux$343.
+    dead port 1/2 on $mux $procmux$340.
+    dead port 1/2 on $mux $procmux$337.
+    dead port 1/2 on $mux $procmux$331.
+    dead port 1/2 on $mux $procmux$328.
+    dead port 1/2 on $mux $procmux$325.
+    dead port 1/2 on $mux $procmux$322.
+    dead port 1/2 on $mux $procmux$319.
+    dead port 1/2 on $mux $procmux$313.
+    dead port 1/2 on $mux $procmux$310.
+    dead port 1/2 on $mux $procmux$307.
+    dead port 1/2 on $mux $procmux$304.
+    dead port 1/2 on $mux $procmux$301.
+    dead port 1/2 on $mux $procmux$295.
+    dead port 1/2 on $mux $procmux$292.
+    dead port 1/2 on $mux $procmux$289.
+    dead port 1/2 on $mux $procmux$286.
+    dead port 1/2 on $mux $procmux$283.
+    dead port 1/2 on $mux $procmux$280.
+    dead port 1/2 on $mux $procmux$274.
+    dead port 1/2 on $mux $procmux$271.
+    dead port 1/2 on $mux $procmux$268.
+    dead port 1/2 on $mux $procmux$265.
+    dead port 1/2 on $mux $procmux$262.
+    dead port 1/2 on $mux $procmux$259.
+    dead port 1/2 on $mux $procmux$249.
+    dead port 1/2 on $mux $procmux$243.
+    dead port 1/2 on $mux $procmux$240.
 Running muxtree optimizer on module \chronos_log_antilog_s16..
   Creating internal representation of mux trees.
   Evaluating internal representation of mux trees.
   Analyzing evaluation results.
-    dead port 1/2 on $mux $procmux$497.
-    dead port 1/2 on $mux $procmux$494.
-    dead port 1/2 on $mux $procmux$491.
-    dead port 1/2 on $mux $procmux$485.
-    dead port 1/2 on $mux $procmux$482.
-    dead port 1/2 on $mux $procmux$479.
-    dead port 1/2 on $mux $procmux$459.
-    dead port 1/2 on $mux $procmux$456.
-    dead port 1/2 on $mux $procmux$453.
-    dead port 2/2 on $mux $procmux$450.
-    dead port 1/2 on $mux $procmux$506.
-    dead port 1/2 on $mux $procmux$444.
-    dead port 1/2 on $mux $procmux$441.
-    dead port 1/2 on $mux $procmux$438.
-    dead port 2/2 on $mux $procmux$435.
-    dead port 1/2 on $mux $procmux$503.
-    dead port 1/2 on $mux $procmux$426.
-    dead port 1/2 on $mux $procmux$512.
-    dead port 1/2 on $mux $procmux$515.
-    dead port 1/2 on $mux $procmux$521.
-    dead port 1/2 on $mux $procmux$527.
+    dead port 1/2 on $mux $procmux$498.
+    dead port 1/2 on $mux $procmux$495.
+    dead port 1/2 on $mux $procmux$492.
+    dead port 1/2 on $mux $procmux$486.
+    dead port 1/2 on $mux $procmux$483.
+    dead port 1/2 on $mux $procmux$480.
+    dead port 1/2 on $mux $procmux$460.
+    dead port 1/2 on $mux $procmux$457.
+    dead port 1/2 on $mux $procmux$454.
+    dead port 2/2 on $mux $procmux$451.
+    dead port 1/2 on $mux $procmux$507.
+    dead port 1/2 on $mux $procmux$445.
+    dead port 1/2 on $mux $procmux$442.
+    dead port 1/2 on $mux $procmux$439.
+    dead port 2/2 on $mux $procmux$436.
+    dead port 1/2 on $mux $procmux$504.
+    dead port 1/2 on $mux $procmux$427.
+    dead port 1/2 on $mux $procmux$513.
+    dead port 1/2 on $mux $procmux$516.
+    dead port 1/2 on $mux $procmux$522.
+    dead port 1/2 on $mux $procmux$528.
 Removed 66 multiplexer ports.
 <suppressed ~6 debug messages>
 
@@ -388,8 +388,8 @@ Using extmapper simplemap for cells of type $pos.
 Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000001011 for cells of type $lcu.
 Using extmapper simplemap for cells of type $and.
 Using extmapper simplemap for cells of type $xor.
-Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000001111 for cells of type $lcu.
 Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000001010 for cells of type $lcu.
+Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000001111 for cells of type $lcu.
 Using extmapper simplemap for cells of type $eq.
 Using template $paramod$e85bcdd999a9f7e1064fcb77207041270947b77a\_90_pmux for cells of type $pmux.
 Running "alumacc" on wrapper $extern:wrap:$lt:A_SIGNED=1:A_WIDTH=5:B_SIGNED=1:B_WIDTH=5:Y_WIDTH=1:394426c56d1a028ba8fdd5469b163e04011def47.
@@ -409,7 +409,7 @@ Using template $paramod$d4c0c20b0ee59f495e14575c4397dc0a6dd9e8e6\_90_alu for cel
 Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000000101 for cells of type $lcu.
 Using template $paramod\_90_lcu\WIDTH=32'00000000000000000000000000010000 for cells of type $lcu.
 No more expansions possible.
-<suppressed ~2008 debug messages>
+<suppressed ~2055 debug messages>
 
 14. Executing OPT pass (performing simple optimizations).
 
@@ -417,14 +417,14 @@ No more expansions possible.
 Optimizing module chronos_log_antilog_s16.
 <suppressed ~1673 debug messages>
 Optimizing module chronos_log_zoh_unit.
-<suppressed ~270 debug messages>
+<suppressed ~289 debug messages>
 
 14.2. Executing OPT_MERGE pass (detect identical cells).
 Finding identical cells in module `\chronos_log_antilog_s16'.
 <suppressed ~645 debug messages>
 Finding identical cells in module `\chronos_log_zoh_unit'.
-<suppressed ~75 debug messages>
-Removed a total of 240 cells.
+<suppressed ~78 debug messages>
+Removed a total of 241 cells.
 
 14.3. Executing OPT_MUXTREE pass (detect dead branches in mux trees).
 Running muxtree optimizer on module \chronos_log_antilog_s16..
@@ -450,8 +450,8 @@ Removed a total of 0 cells.
 14.7. Executing OPT_CLEAN pass (remove unused cells and wires).
 Finding unused cells or wires in module \chronos_log_antilog_s16..
 Finding unused cells or wires in module \chronos_log_zoh_unit..
-Removed 83 unused cells and 1278 unused wires.
-<suppressed ~85 debug messages>
+Removed 95 unused cells and 1307 unused wires.
+<suppressed ~97 debug messages>
 
 14.8. Executing OPT_EXPR pass (perform const folding).
 Optimizing module chronos_log_antilog_s16.
@@ -494,78 +494,84 @@ Optimizing module chronos_log_zoh_unit.
 
 Longest topological path in chronos_log_antilog_s16 (length=30):
     0: \log_val_i [5]
-    1: \exp2_frac_lut [2] (via $auto$mem.cc:273:emit$233)
-    2: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:98$111.$auto$alumacc.cc:485:replace_alu$1751.X [2] (via $auto$simplemap.cc:38:simplemap_not$2756)
-    3: $techmap$techmap$add$rtl/arith/chronos_log_antilog_s16.sv:98$111.$auto$alumacc.cc:485:replace_alu$1751.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$2584_Y (via $auto$simplemap.cc:75:simplemap_bitop$3785)
-    4: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1755.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$2592_Y (via $auto$simplemap.cc:75:simplemap_bitop$4007)
-    5: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1755.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$2609_Y (via $auto$simplemap.cc:75:simplemap_bitop$3975)
-    6: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1755.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$2610_Y (via $auto$simplemap.cc:75:simplemap_bitop$4013)
-    7: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1755.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$2618_Y (via $auto$simplemap.cc:75:simplemap_bitop$3978)
-    8: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1755.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$2619_Y (via $auto$simplemap.cc:75:simplemap_bitop$4016)
-    9: $techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1755.CO [15] (via $auto$simplemap.cc:75:simplemap_bitop$4017)
-   10: $procmux$462.B [5] (via $auto$simplemap.cc:38:simplemap_not$2449)
-   11: $procmux$462.B_AND_S [5] (via $auto$simplemap.cc:75:simplemap_bitop$2353)
-   12: $auto$simplemap.cc:117:simplemap_reduce$2016 [0] (via $auto$simplemap.cc:126:simplemap_reduce$2017)
-   13: $auto$simplemap.cc:117:simplemap_reduce$2024 [0] (via $auto$simplemap.cc:126:simplemap_reduce$2025)
-   14: $auto$simplemap.cc:117:simplemap_reduce$2029 [0] (via $auto$simplemap.cc:126:simplemap_reduce$2030)
-   15: $procmux$462.Y_B [5] (via $auto$simplemap.cc:126:simplemap_reduce$2033)
-   16: $procmux$462.Y [5] (via $auto$simplemap.cc:267:simplemap_mux$2369)
-   17: $3\mag_u16[15:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$1426)
-   18: $2\mag_u16[15:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$1410)
-   19: \mag_u16 [5] (via $auto$simplemap.cc:267:simplemap_mux$1694)
-   20: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.B [5] (via $auto$simplemap.cc:38:simplemap_not$1806)
-   21: $techmap$techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$2587_Y (via $auto$simplemap.cc:75:simplemap_bitop$4046)
-   22: $techmap$techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$2608_Y (via $auto$simplemap.cc:75:simplemap_bitop$4052)
-   23: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.CO [7] (via $auto$simplemap.cc:75:simplemap_bitop$4042)
-   24: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.CO [11] (via $auto$simplemap.cc:75:simplemap_bitop$4056)
-   25: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.CO [13] (via $auto$simplemap.cc:75:simplemap_bitop$4059)
-   26: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.CO [14] (via $auto$simplemap.cc:75:simplemap_bitop$4066)
-   27: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1817.Y [15] (via $auto$opt_expr.cc:607:replace_const_cells$4238)
-   28: $ternary$rtl/arith/chronos_log_antilog_s16.sv:125$123_Y [15] (via $auto$simplemap.cc:267:simplemap_mux$1835)
-   29: $2\lin_o[15:0] [15] (via $auto$simplemap.cc:267:simplemap_mux$1403)
-   30: \lin_o [15] (via $auto$simplemap.cc:267:simplemap_mux$1387)
+    1: \exp2_frac_lut [2] (via $auto$mem.cc:273:emit$234)
+    2: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:98$111.$auto$alumacc.cc:485:replace_alu$1845.X [2] (via $auto$simplemap.cc:38:simplemap_not$2850)
+    3: $techmap$techmap$add$rtl/arith/chronos_log_antilog_s16.sv:98$111.$auto$alumacc.cc:485:replace_alu$1845.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$2678_Y (via $auto$simplemap.cc:75:simplemap_bitop$3879)
+    4: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1849.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$2686_Y (via $auto$simplemap.cc:75:simplemap_bitop$4101)
+    5: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1849.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$2703_Y (via $auto$simplemap.cc:75:simplemap_bitop$4069)
+    6: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1849.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$2704_Y (via $auto$simplemap.cc:75:simplemap_bitop$4107)
+    7: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1849.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$2712_Y (via $auto$simplemap.cc:75:simplemap_bitop$4072)
+    8: $techmap$techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1849.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$2713_Y (via $auto$simplemap.cc:75:simplemap_bitop$4110)
+    9: $techmap$ge$rtl/arith/chronos_log_antilog_s16.sv:108$117.$auto$alumacc.cc:485:replace_alu$1849.CO [15] (via $auto$simplemap.cc:75:simplemap_bitop$4111)
+   10: $procmux$463.B [5] (via $auto$simplemap.cc:38:simplemap_not$2543)
+   11: $procmux$463.B_AND_S [5] (via $auto$simplemap.cc:75:simplemap_bitop$2447)
+   12: $auto$simplemap.cc:117:simplemap_reduce$2110 [0] (via $auto$simplemap.cc:126:simplemap_reduce$2111)
+   13: $auto$simplemap.cc:117:simplemap_reduce$2118 [0] (via $auto$simplemap.cc:126:simplemap_reduce$2119)
+   14: $auto$simplemap.cc:117:simplemap_reduce$2123 [0] (via $auto$simplemap.cc:126:simplemap_reduce$2124)
+   15: $procmux$463.Y_B [5] (via $auto$simplemap.cc:126:simplemap_reduce$2127)
+   16: $procmux$463.Y [5] (via $auto$simplemap.cc:267:simplemap_mux$2463)
+   17: $3\mag_u16[15:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$1520)
+   18: $2\mag_u16[15:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$1504)
+   19: \mag_u16 [5] (via $auto$simplemap.cc:267:simplemap_mux$1788)
+   20: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.B [5] (via $auto$simplemap.cc:38:simplemap_not$1900)
+   21: $techmap$techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$2681_Y (via $auto$simplemap.cc:75:simplemap_bitop$4140)
+   22: $techmap$techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$2702_Y (via $auto$simplemap.cc:75:simplemap_bitop$4146)
+   23: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.CO [7] (via $auto$simplemap.cc:75:simplemap_bitop$4136)
+   24: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.CO [11] (via $auto$simplemap.cc:75:simplemap_bitop$4150)
+   25: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.CO [13] (via $auto$simplemap.cc:75:simplemap_bitop$4153)
+   26: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.CO [14] (via $auto$simplemap.cc:75:simplemap_bitop$4160)
+   27: $techmap$add$rtl/arith/chronos_log_antilog_s16.sv:125$122.$auto$alumacc.cc:485:replace_alu$1911.Y [15] (via $auto$opt_expr.cc:607:replace_const_cells$4332)
+   28: $ternary$rtl/arith/chronos_log_antilog_s16.sv:125$123_Y [15] (via $auto$simplemap.cc:267:simplemap_mux$1929)
+   29: $2\lin_o[15:0] [15] (via $auto$simplemap.cc:267:simplemap_mux$1497)
+   30: \lin_o [15] (via $auto$simplemap.cc:267:simplemap_mux$1481)
 
-Longest topological path in chronos_log_zoh_unit (length=39):
+Longest topological path in chronos_log_zoh_unit (length=45):
     0: \delta_q2_6_i [1]
-    1: $7\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$669)
-    2: $6\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$639)
-    3: $5\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$621)
-    4: $4\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$705)
-    5: $3\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$657)
-    6: $2\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$648)
-    7: \d_raw_mant [5] (via $auto$simplemap.cc:267:simplemap_mux$633)
-    8: \d_lut_frac [0] (via $auto$mem.cc:273:emit$229)
-    9: \delta_log_q3_6 [0] (via $auto$simplemap.cc:267:simplemap_mux$717)
-   10: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.CO [0] (via $auto$simplemap.cc:75:simplemap_bitop$918)
-   11: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$817_Y (via $auto$simplemap.cc:75:simplemap_bitop$1231)
-   12: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.CO [1] (via $auto$simplemap.cc:75:simplemap_bitop$1252)
-   13: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$832_Y (via $auto$simplemap.cc:75:simplemap_bitop$1236)
-   14: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.CO [3] (via $auto$simplemap.cc:75:simplemap_bitop$1257)
-   15: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$841_Y (via $auto$simplemap.cc:75:simplemap_bitop$1244)
-   16: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.CO [5] (via $auto$simplemap.cc:75:simplemap_bitop$1260)
-   17: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$853_Y (via $auto$simplemap.cc:75:simplemap_bitop$1248)
-   18: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.CO [6] (via $auto$simplemap.cc:75:simplemap_bitop$1264)
-   19: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$128.$auto$alumacc.cc:485:replace_alu$726.Y [7] (via $auto$simplemap.cc:75:simplemap_bitop$947)
-   20: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$129.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$828_Y (via $auto$simplemap.cc:75:simplemap_bitop$1204)
-   21: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$129.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$837_Y (via $auto$simplemap.cc:75:simplemap_bitop$1206)
-   22: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$129.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$838_Y (via $auto$simplemap.cc:75:simplemap_bitop$1201)
-   23: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$129.$auto$alumacc.cc:485:replace_alu$726.CO [7] (via $auto$simplemap.cc:75:simplemap_bitop$1222)
-   24: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$129.$auto$alumacc.cc:485:replace_alu$726.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$856_Y (via $auto$simplemap.cc:75:simplemap_bitop$1212)
-   25: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:108$129.$auto$alumacc.cc:485:replace_alu$726.CO [8] (via $auto$simplemap.cc:75:simplemap_bitop$1228)
-   26: \log_fused_q5_6 [9] (via $auto$simplemap.cc:75:simplemap_bitop$893)
-   27: \decay_lin_q4_6 [2] (via u_da_antilog)
-   28: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:125$135.$auto$alumacc.cc:485:replace_alu$742.BB [2] (via $auto$simplemap.cc:38:simplemap_not$954)
-   29: $auto$simplemap.cc:117:simplemap_reduce$778 [1] (via $auto$simplemap.cc:75:simplemap_bitop$1330)
-   30: $techmap$lt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$748.CO [3] (via $auto$simplemap.cc:75:simplemap_bitop$1327)
-   31: $techmap$lt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$748.CO [7] (via $auto$simplemap.cc:75:simplemap_bitop$1329)
-   32: $techmap$lt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$748.CO [9] (via $auto$simplemap.cc:75:simplemap_bitop$1336)
-   33: $techmap$lt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$rtlil.cc:2401:Not$752 (via $auto$simplemap.cc:38:simplemap_not$777)
-   34: $techmap$lt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$rtlil.cc:2432:Or$756 (via $auto$simplemap.cc:75:simplemap_bitop$791)
-   35: $lt$rtl/arith/chronos_log_zoh_unit.sv:127$136_Y (via $auto$simplemap.cc:38:simplemap_not$771)
-   36: $logic_and$rtl/arith/chronos_log_zoh_unit.sv:127$137_Y (via $auto$simplemap.cc:225:simplemap_logbin$759)
-   37: $3\decay_log2_o[9:0] [9] (via $auto$simplemap.cc:267:simplemap_mux$699)
-   38: $2\decay_log2_o[9:0] [9] (via $auto$simplemap.cc:267:simplemap_mux$689)
-   39: \decay_log2_o [9] (via $auto$simplemap.cc:267:simplemap_mux$679)
+    1: $7\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$670)
+    2: $6\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$640)
+    3: $5\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$622)
+    4: $4\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$706)
+    5: $3\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$658)
+    6: $2\d_raw_mant[5:0] [5] (via $auto$simplemap.cc:267:simplemap_mux$649)
+    7: \d_raw_mant [5] (via $auto$simplemap.cc:267:simplemap_mux$634)
+    8: \d_lut_frac [0] (via $auto$mem.cc:273:emit$230)
+    9: \delta_log_q3_6 [0] (via $auto$simplemap.cc:267:simplemap_mux$718)
+   10: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.CO [0] (via $auto$simplemap.cc:75:simplemap_bitop$919)
+   11: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$818_Y (via $auto$simplemap.cc:75:simplemap_bitop$1288)
+   12: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.CO [1] (via $auto$simplemap.cc:75:simplemap_bitop$1309)
+   13: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$833_Y (via $auto$simplemap.cc:75:simplemap_bitop$1293)
+   14: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.CO [3] (via $auto$simplemap.cc:75:simplemap_bitop$1314)
+   15: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$842_Y (via $auto$simplemap.cc:75:simplemap_bitop$1301)
+   16: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.CO [5] (via $auto$simplemap.cc:75:simplemap_bitop$1317)
+   17: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$854_Y (via $auto$simplemap.cc:75:simplemap_bitop$1305)
+   18: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.CO [6] (via $auto$simplemap.cc:75:simplemap_bitop$1321)
+   19: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$128.$auto$alumacc.cc:485:replace_alu$727.Y [7] (via $auto$simplemap.cc:75:simplemap_bitop$948)
+   20: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.X [7] (via $auto$simplemap.cc:75:simplemap_bitop$881)
+   21: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$829_Y (via $auto$simplemap.cc:75:simplemap_bitop$1261)
+   22: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$838_Y (via $auto$simplemap.cc:75:simplemap_bitop$1263)
+   23: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$839_Y (via $auto$simplemap.cc:75:simplemap_bitop$1258)
+   24: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.CO [7] (via $auto$simplemap.cc:75:simplemap_bitop$1279)
+   25: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$857_Y (via $auto$simplemap.cc:75:simplemap_bitop$1269)
+   26: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.CO [8] (via $auto$simplemap.cc:75:simplemap_bitop$1285)
+   27: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$129.$auto$alumacc.cc:485:replace_alu$727.Y [9] (via $auto$simplemap.cc:75:simplemap_bitop$894)
+   28: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$130.$auto$alumacc.cc:485:replace_alu$727.X [9] (via $auto$opt_expr.cc:607:replace_const_cells$4380)
+   29: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$130.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:241$832_Y (via $auto$simplemap.cc:75:simplemap_bitop$1425)
+   30: $techmap$techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$130.$auto$alumacc.cc:485:replace_alu$727.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$845_Y (via $auto$simplemap.cc:75:simplemap_bitop$1428)
+   31: $techmap$add$rtl/arith/chronos_log_zoh_unit.sv:109$130.$auto$alumacc.cc:485:replace_alu$727.CO [9] (via $auto$simplemap.cc:75:simplemap_bitop$1444)
+   32: \log_fused_q5_6 [10] (via $auto$simplemap.cc:75:simplemap_bitop$1248)
+   33: \decay_lin_q4_6 [2] (via u_da_antilog)
+   34: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.BB [2] (via $auto$simplemap.cc:38:simplemap_not$955)
+   35: $techmap$techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$1085_Y (via $auto$simplemap.cc:75:simplemap_bitop$1361)
+   36: $techmap$techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.lcu.$or$/usr/bin/../share/yosys/techmap.v:240$1086_Y (via $auto$simplemap.cc:75:simplemap_bitop$1392)
+   37: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.CO [3] (via $auto$simplemap.cc:75:simplemap_bitop$1398)
+   38: $techmap$techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.lcu.$and$/usr/bin/../share/yosys/techmap.v:240$1112_Y (via $auto$simplemap.cc:75:simplemap_bitop$1370)
+   39: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.CO [7] (via $auto$simplemap.cc:75:simplemap_bitop$1401)
+   40: $techmap$techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.lcu.$and$/usr/bin/../share/yosys/techmap.v:248$1115_Y (via $auto$simplemap.cc:75:simplemap_bitop$1379)
+   41: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.CO [11] (via $auto$simplemap.cc:75:simplemap_bitop$1402)
+   42: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.CO [13] (via $auto$simplemap.cc:75:simplemap_bitop$1382)
+   43: $techmap$gt$rtl/arith/chronos_log_zoh_unit.sv:127$136.$auto$alumacc.cc:485:replace_alu$743.CO [14] (via $auto$simplemap.cc:75:simplemap_bitop$1389)
+   44: $2\decay_log2_o[9:0] [9] (via $auto$simplemap.cc:267:simplemap_mux$690)
+   45: \decay_log2_o [9] (via $auto$simplemap.cc:267:simplemap_mux$680)
 
 16. Printing statistics.
 
@@ -589,19 +595,19 @@ Longest topological path in chronos_log_zoh_unit (length=39):
 
 === chronos_log_zoh_unit ===
 
-   Number of wires:                100
-   Number of wire bits:            333
-   Number of public wires:          13
-   Number of public wire bits:      82
+   Number of wires:                128
+   Number of wire bits:            409
+   Number of public wires:          14
+   Number of public wire bits:      91
    Number of memories:               1
    Number of memory bits:          384
    Number of processes:              0
-   Number of cells:                235
-     $_AND_                         71
+   Number of cells:                295
+     $_AND_                         99
      $_MUX_                         80
      $_NOT_                         22
-     $_OR_                          34
-     $_XOR_                         25
+     $_OR_                          47
+     $_XOR_                         44
      $meminit                        1
      $memrd_v2                       1
      chronos_log_antilog_s16         1
@@ -611,23 +617,23 @@ Longest topological path in chronos_log_zoh_unit (length=39):
    chronos_log_zoh_unit              1
      chronos_log_antilog_s16         1
 
-   Number of wires:                246
-   Number of wire bits:           1562
-   Number of public wires:          23
-   Number of public wire bits:     156
+   Number of wires:                274
+   Number of wire bits:           1638
+   Number of public wires:          24
+   Number of public wire bits:     165
    Number of memories:               2
    Number of memory bits:          896
    Number of processes:              0
-   Number of cells:                791
-     $_AND_                        238
+   Number of cells:                851
+     $_AND_                        266
      $_MUX_                        199
      $_NOT_                         77
-     $_OR_                         200
-     $_XOR_                         73
+     $_OR_                         213
+     $_XOR_                         92
      $meminit                        2
      $memrd_v2                       2
 
 Warnings: 6 unique messages, 6 total
-End of script. Logfile hash: b5b912761e, CPU: user 0.29s system 0.01s, MEM: 26.12 MB peak
+End of script. Logfile hash: 5bf7560a79, CPU: user 0.34s system 0.01s, MEM: 26.88 MB peak
 Yosys 0.33 (git sha1 2584903a060)
-Time spent: 28% 1x techmap (0 sec), 27% 17x opt_expr (0 sec), ...
+Time spent: 28% 17x opt_expr (0 sec), 27% 1x techmap (0 sec), ...

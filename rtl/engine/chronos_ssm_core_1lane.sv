@@ -34,6 +34,7 @@ module chronos_ssm_core_1lane #(
     input  logic                    n_first_i,      // First state n=0 of channel d (clears y_acc)
     input  logic                    n_last_i,       // Last state n=N-1 of channel d (adds D*x)
     input  logic                    lyap_guard_i,   // Enforce spectral stability |A_bar| < 1
+    input  logic        [8:0]       coalesce_log_q3_6_i, // ★ v1.3.0: log2(1+K_skip) Q3.6 for RR-interval coalesced decay
     input  logic [STATE_ADDR_W-1:0] state_addr_i,   // Target Bank 1 address for h[t] writeback
 
     // SSM Inputs for State (d, n)
@@ -85,15 +86,16 @@ module chronos_ssm_core_1lane #(
         .log_o  ( h_prev_log_q4_6 )
     );
 
-    // 1b. CSD-Fused Log-ZOH Decay: |log2(exp(-Δ*|A|))| in Q4.6
+    // 1b. Constant-Fused & Coalesced Log-ZOH Decay: |log2(exp(-(1+K)*Δ*|A|))| in Q4.6
     logic [9:0] decay_log2_q4_6;
 
     chronos_log_zoh_unit u_log_zoh (
-        .delta_q2_6_i ( delta_q2_6_i    ),
-        .a_log_q3_6_i ( a_log_q3_6_i    ),
-        .a_zero_i     ( a_zero_i        ),
-        .lyap_guard_i ( lyap_guard_i    ),
-        .decay_log2_o ( decay_log2_q4_6 )
+        .delta_q2_6_i        ( delta_q2_6_i        ),
+        .a_log_q3_6_i        ( a_log_q3_6_i        ),
+        .a_zero_i            ( a_zero_i            ),
+        .lyap_guard_i        ( lyap_guard_i        ),
+        .coalesce_log_q3_6_i ( coalesce_log_q3_6_i ),
+        .decay_log2_o        ( decay_log2_q4_6     )
     );
 
     // Log-domain decay subtraction: log2(|A_bar * h[t-1]|) = log2(|h[t-1]|) - decay_log2

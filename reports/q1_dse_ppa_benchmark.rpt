@@ -4,7 +4,7 @@
   [Arith] LOD8 + Antilog16 MRE (256 pts)       : 0.051%
   [Arith] LOD16 + Antilog16 MRE (468 pts)      : 0.380%
   [Arith] Log-ZOH exp(-dA) MAE / MaxAbsErr     : MAE = 0.0014, MaxAbsErr = 0.0053
-  [Arith] Coalesced Multi-Step RR Decay (K=3)  : Not present in this RTL version
+  [Arith] Coalesced Multi-Step RR Decay (K=3)  : FP64 exp(-4*dA)=0.3679, HW=0.3652 (Err=0.0026)
   [Drift] 1,000-Step Mean Signed Drift Bias    : -0.000014
   [Drift] 1,000-Step Long-Sequence State RMSE  : 0.020915
   [Drift] 1,000-Step Worst-Case Abs Error      : 0.103599
@@ -19,17 +19,17 @@
 ==============================================================================
   Module / Metric (Measured Live on Current RTL)       | Value
   ----------------------------------------------------------------------------
-  chronos_log_zoh_unit Local Gate Cells                : 791 cells
-  chronos_log_zoh_unit Total Hierarchical Gate Cells   : 791 cells
-  chronos_log_zoh_unit Longest Topological Path (LTP)  : 39 gate levels
+  chronos_log_zoh_unit Local Gate Cells                : 851 cells
+  chronos_log_zoh_unit Total Hierarchical Gate Cells   : 851 cells
+  chronos_log_zoh_unit Longest Topological Path (LTP)  : 45 gate levels
   chronos_log_antilog_s16 Gate Cells / LTP             : 557 cells / 30 levels
   chronos_lod_s16 Gate Cells / LTP                     : 276 cells / 28 levels
   chronos_lod_u8 Gate Cells / LTP                      : 90 cells / 12 levels
   chronos_pwl_nonlinear Gate Cells / LTP               : 628 cells / 49 levels
   chronos_ssm_core_1lane (Engine B) LOD8 Instances     : 4 instances
-  chronos_ssm_core_1lane (Engine B) Local Gate Cells   : 6,826 cells
-  chronos_ssm_core_1lane (Engine B) Total Gate Cells   : 6,826 cells
-  chronos_soc_top Full-SoC RTL Primitives ($mul count) : 7,135 cells (0-DSP Verified: True)
+  chronos_ssm_core_1lane (Engine B) Local Gate Cells   : 6,886 cells
+  chronos_ssm_core_1lane (Engine B) Total Gate Cells   : 6,886 cells
+  chronos_soc_top Full-SoC RTL Primitives ($mul count) : 7,194 cells (0-DSP Verified: True)
   Reference Linear INT16/8 Mamba Core Gate Cells / LTP : 5,682 cells / 359 levels (6x MUL)
   ----------------------------------------------------------------------------
 

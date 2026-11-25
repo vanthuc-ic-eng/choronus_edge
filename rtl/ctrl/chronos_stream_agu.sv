@@ -32,6 +32,8 @@ module chronos_stream_agu #(
     // CSR Control & Config
     input  logic                    start_pulse_i,
     input  logic                    mode_s6_i,        // 0=S4D, 1=Selective Mamba
+    input  logic                    rr_coalesce_en_i, // ★ v1.3.0: Coalesced Multi-Step Log-ZOH Decay
+    input  logic [1:0]              cfg_num_layers_i, // ★ v1.3.0: Time-Multiplexed Mamba Layers (1..3)
     input  logic [7:0]              cfg_d_model_i,
     input  logic [7:0]              cfg_n_state_i,
     input  logic [7:0]              cfg_d_in_i,
@@ -120,6 +122,7 @@ module chronos_stream_agu #(
     output logic                    eng_b_submode_o,
     output logic                    eng_b_n_first_o,
     output logic                    eng_b_n_last_o,
+    output logic [8:0]              eng_b_coalesce_log_o, // ★ v1.3.0: log2(1 + K_skip) Q3.6
     output logic [STATE_ADDR_W-1:0] eng_b_state_addr_o,
     output logic [7:0]              eng_b_delta_o,
     output logic signed [7:0]       eng_b_b_o,
@@ -203,12 +206,41 @@ module chronos_stream_agu #(
     // Effective Geometry Guards
     logic [7:0]  eff_d_model, eff_n_state, eff_d_in, eff_num_cls;
     logic [15:0] eff_seq_len;
+    logic [1:0]  eff_num_layers;
+    logic [1:0]  layer_q;
+    logic [7:0]  silent_run_cnt_q;
+    logic [8:0]  coalesce_log_q3_6;
 
-    assign eff_d_model = (cfg_d_model_i == 8'd0) ? 8'd16 : cfg_d_model_i;
-    assign eff_n_state = (cfg_n_state_i == 8'd0) ? 8'd4  : cfg_n_state_i;
-    assign eff_d_in    = (cfg_d_in_i    == 8'd0) ? 8'd8  : cfg_d_in_i;
-    assign eff_num_cls = (cfg_num_cls_i == 8'd0) ? 8'd5  : cfg_num_cls_i;
-    assign eff_seq_len = (cfg_seq_len_i == 16'd0)? 16'd1 : cfg_seq_len_i;
+    assign eff_d_model    = (cfg_d_model_i    == 8'd0)  ? 8'd16  : cfg_d_model_i;
+    assign eff_n_state    = (cfg_n_state_i    == 8'd0)  ? 8'd4   : cfg_n_state_i;
+    assign eff_d_in       = (cfg_d_in_i       == 8'd0)  ? 8'd8   : cfg_d_in_i;
+    assign eff_num_cls    = (cfg_num_cls_i    == 8'd0)  ? 8'd5   : cfg_num_cls_i;
+    assign eff_seq_len    = (cfg_seq_len_i    == 16'd0) ? 16'd1  : cfg_seq_len_i;
+    assign eff_num_layers = (cfg_num_layers_i == 2'd0)  ? 2'd1   : cfg_num_layers_i;
+
+    // ★ v1.3.0: Exact Q3.6 log2(1 + K_skip) lookup for Coalesced Multi-Step Log-ZOH Decay
+    //   Preserves exact ECG RR-interval biological clock across K_skip silent frames!
+    always_comb begin
+        if (!rr_coalesce_en_i || (silent_run_cnt_q == 8'd0)) begin
+            coalesce_log_q3_6 = 9'd0;
+        end else begin
+            case (silent_run_cnt_q)
+                8'd1   : coalesce_log_q3_6 = 9'd64;  // log2(2) = 1.000 * 64
+                8'd2   : coalesce_log_q3_6 = 9'd101; // log2(3) = 1.585 * 64
+                8'd3   : coalesce_log_q3_6 = 9'd128; // log2(4) = 2.000 * 64
+                8'd4   : coalesce_log_q3_6 = 9'd149; // log2(5) = 2.322 * 64
+                8'd5   : coalesce_log_q3_6 = 9'd165; // log2(6) = 2.585 * 64
+                8'd6   : coalesce_log_q3_6 = 9'd180; // log2(7) = 2.807 * 64
+                8'd7   : coalesce_log_q3_6 = 9'd192; // log2(8) = 3.000 * 64
+                default: begin
+                    if      (silent_run_cnt_q < 8'd16)  coalesce_log_q3_6 = 9'd224; // ~3.5 * 64
+                    else if (silent_run_cnt_q < 8'd32)  coalesce_log_q3_6 = 9'd288; // ~4.5 * 64
+                    else if (silent_run_cnt_q < 8'd64)  coalesce_log_q3_6 = 9'd352; // ~5.5 * 64
+                    else                                coalesce_log_q3_6 = 9'd416; // ~6.5 * 64
+                end
+            endcase
+        end
+    end
 
     assign fsm_state_o = state_q;
     assign busy_o      = (state_q != HWPE_IDLE) && (state_q != HWPE_DONE);
@@ -304,11 +336,12 @@ module chronos_stream_agu #(
                                rd_valid_d1_q || eng_b_out_valid_i);
         ssm_active_o        = eng_b_cg_en_o && (rd_valid_d1_q || eng_b_out_valid_i);
 
-        eng_b_valid_o       = rd_valid_d1_q;
-        eng_b_submode_o     = rd_submode_d1_q;
-        eng_b_n_first_o     = rd_n_first_d1_q;
-        eng_b_n_last_o      = rd_n_last_d1_q;
-        eng_b_state_addr_o  = rd_addr_d1_q;
+        eng_b_valid_o        = rd_valid_d1_q;
+        eng_b_submode_o      = rd_submode_d1_q;
+        eng_b_n_first_o      = rd_n_first_d1_q;
+        eng_b_n_last_o       = rd_n_last_d1_q;
+        eng_b_coalesce_log_o = coalesce_log_q3_6;
+        eng_b_state_addr_o   = rd_addr_d1_q;
         eng_b_delta_o       = delta_reg[rd_d_d1_q];
         eng_b_b_o           = b_reg[rd_n_d1_q];
         eng_b_c_o           = c_reg[rd_n_d1_q];
@@ -482,6 +515,8 @@ module chronos_stream_agu #(
             done_pulse_o      <= 1'b0;
             step_q            <= 16'd0;
             step_u_base_q     <= '0;
+            layer_q           <= 2'd0;
+            silent_run_cnt_q  <= 8'd0;
             grp_q             <= 8'd0;
             k_idx_q           <= 8'd0;
             sub_ph_q          <= 3'd0;
@@ -520,13 +555,15 @@ module chronos_stream_agu #(
             case (state_q)
                 HWPE_IDLE: begin
                     if (start_pulse_i) begin
-                        state_q       <= HWPE_STEP_CHK;
-                        step_q        <= 16'd0;
-                        step_u_base_q <= '0;
-                        sub_ph_q      <= 3'd0;
-                        k_idx_q       <= 8'd0;
-                        grp_q         <= 8'd0;
-                        pipe_dly_q    <= 3'd0;
+                        state_q          <= HWPE_STEP_CHK;
+                        step_q           <= 16'd0;
+                        step_u_base_q    <= '0;
+                        layer_q          <= 2'd0;
+                        silent_run_cnt_q <= 8'd0;
+                        sub_ph_q         <= 3'd0;
+                        k_idx_q          <= 8'd0;
+                        grp_q            <= 8'd0;
+                        pipe_dly_q       <= 3'd0;
                     end
                 end
 
@@ -548,7 +585,9 @@ module chronos_stream_agu #(
                         end
                         3'd2: begin
                             if (act_early_exit_i) begin
-                                // ★ LEVEL-1 SILENT FRAME EARLY EXIT! ★
+                                // ★ LEVEL-1 SILENT FRAME EARLY EXIT (+ RR-Interval Counter!) ★
+                                if (silent_run_cnt_q < 8'd255)
+                                    silent_run_cnt_q <= silent_run_cnt_q + 8'd1;
                                 if (step_q + 16'd1 < eff_seq_len) begin
                                     step_q        <= step_q + 16'd1;
                                     step_u_base_q <= step_u_base_q + eff_d_in[RING_ADDR_W-1:0];
@@ -561,8 +600,9 @@ module chronos_stream_agu #(
                                     pipe_dly_q <= 3'd0;
                                 end
                             end else begin
-                                // Active frame -> proceed to Linear_in + Conv1D
+                                // Active frame -> proceed to Layer 0 Linear_in + Conv1D
                                 state_q    <= HWPE_IN_PROJ;
+                                layer_q    <= 2'd0;
                                 sub_ph_q   <= 3'd0;
                                 grp_q      <= 8'd0;
                                 k_idx_q    <= 8'd0;
@@ -794,13 +834,25 @@ module chronos_stream_agu #(
 
                         2'd3: begin
                             if (prod_done_q) begin
-                                if (step_q + 16'd1 < eff_seq_len) begin
+                                silent_run_cnt_q <= 8'd0; // Coalesced decay consumed!
+                                if (layer_q + 2'd1 < eff_num_layers) begin
+                                    // ★ v1.3.0: Time-Multiplexed Next Mamba Layer on same hardware!
+                                    layer_q    <= layer_q + 2'd1;
+                                    state_q    <= HWPE_IN_PROJ;
+                                    sub_ph_q   <= 3'd0;
+                                    grp_q      <= 8'd0;
+                                    k_idx_q    <= 8'd0;
+                                    cons_d_q   <= 8'd0;
+                                    pipe_dly_q <= 3'd0;
+                                end else if (step_q + 16'd1 < eff_seq_len) begin
+                                    layer_q       <= 2'd0;
                                     step_q        <= step_q + 16'd1;
                                     step_u_base_q <= step_u_base_q + eff_d_in[RING_ADDR_W-1:0];
                                     state_q       <= HWPE_STEP_CHK;
                                     sub_ph_q      <= 3'd0;
                                     k_idx_q       <= 8'd0;
                                 end else begin
+                                    layer_q    <= 2'd0;
                                     state_q    <= HWPE_OUT_PROJ;
                                     grp_q      <= 8'd0;
                                     k_idx_q    <= 8'd0;

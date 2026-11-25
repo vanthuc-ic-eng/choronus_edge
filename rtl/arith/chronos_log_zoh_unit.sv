@@ -26,11 +26,12 @@
 module chronos_log_zoh_unit #(
     parameter bit A_LOG_PREFUSED = 1'b0 // 0: fuse +34 in RTL (-222); 1: +34 pre-added in Bank 3 A_log (-256)
 )(
-    input  logic        [7:0] delta_q2_6_i,   // Unsigned Q2.6 (0..3.984)
-    input  logic        [8:0] a_log_q3_6_i,   // Pre-encoded Q3.6 log2(|A|*16)
-    input  logic              a_zero_i,       // 1 if A == 0
-    input  logic              lyap_guard_i,   // 1 = enforce Lyapunov spectral stability
-    output logic        [9:0] decay_log2_o    // Unsigned Q4.6 |log2(exp(-Δ*|A|))|
+    input  logic        [7:0] delta_q2_6_i,        // Unsigned Q2.6 (0..3.984)
+    input  logic        [8:0] a_log_q3_6_i,        // Pre-encoded Q3.6 log2(|A|*16)
+    input  logic              a_zero_i,            // 1 if A == 0
+    input  logic              lyap_guard_i,        // 1 = enforce Lyapunov spectral stability
+    input  logic        [8:0] coalesce_log_q3_6_i, // ★ v1.3.0: log2(1 + K_skip) in Q3.6 for RR-interval coalesced decay
+    output logic        [9:0] decay_log2_o         // Unsigned Q4.6 |log2(exp(-(1+K)*Δ*|A|))|
 );
 
     localparam logic signed [10:0] LOG2_LOG2E_Q5_6 = 11'sd34; // round(log2(log2(e)) * 64)
@@ -100,13 +101,14 @@ module chronos_log_zoh_unit #(
 
     assign delta_log_q3_6 = delta_zero ? 9'd0 : {d_exp, d_lut_frac};
 
-    // Step 2: Direct Log-Fused Product Δ * |A| * log2(e) in Q4.6!
-    //         Single 11-bit addition + 1 Antilog16 look-up (0 CSD adder tree!)
+    // Step 2: Direct Log-Fused Product (1 + K_skip) * Δ * |A| * log2(e) in Q4.6!
+    //         Single addition tree + 1 Antilog16 look-up (0 CSD adder tree!)
     logic signed [10:0] log_fused_q5_6;
     logic signed [15:0] decay_lin_q4_6;
 
     assign log_fused_q5_6 = $signed({2'b00, delta_log_q3_6})
                           + $signed({2'b00, a_log_q3_6_i})
+                          + $signed({2'b00, coalesce_log_q3_6_i})
                           + ZOH_EXP_OFFSET;
 
     chronos_log_antilog_s16 u_da_antilog (
