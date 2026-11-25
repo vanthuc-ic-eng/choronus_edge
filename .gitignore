@@ -1,0 +1,22 @@
+# Build & Simulation Artifacts
+build/
+obj_dir/
+*.vcd
+*.fst
+*.saif
+*.vvp
+*.out
+
+# LaTeX Temporary Build Files
+*.aux
+*.log
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# OS / Editor Temporary Files
+.DS_Store
+__pycache__/
+*.pyc
+*~

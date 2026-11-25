@@ -1,0 +1,53 @@
+==============================================================================
+ 1. LIVE VERILATOR CYCLE-ACCURATE & BIT-TRUE RTL TELEMETRY (CURRENT VERSION)
+==============================================================================
+  [Arith] LOD8 + Antilog16 MRE (256 pts)       : 0.051%
+  [Arith] LOD16 + Antilog16 MRE (468 pts)      : 0.380%
+  [Arith] Log-ZOH exp(-dA) MAE / MaxAbsErr     : MAE = 0.0013, MaxAbsErr = 0.0044
+  [Arith] Coalesced Multi-Step RR Decay (K=3)  : Not present in this RTL version
+  [Drift] 1,000-Step Mean Signed Drift Bias    : 0.000040
+  [Drift] 1,000-Step Long-Sequence State RMSE  : 0.020896
+  [Drift] 1,000-Step Worst-Case Abs Error      : 0.103599
+  [SoC]   Baseline Active Cycles               : 3355 cyc
+  [SoC]   CHRONOS Optimized Cycles             : 1759 cyc  (47.6% SPEEDUP!)
+  [SoC]   CHRONOS PMU Energy Proxy             : 6928 units (57.3% ENERGY SAVED!)
+  [SoC]   Bank-1 True Dual-Port SRAM Saved     : 1152 accesses eliminated!
+  ----------------------------------------------------------------------------
+
+==============================================================================
+ 2. LIVE YOSYS GATE-LEVEL AREA & CRITICAL-PATH (LTP) SYNTHESIS (CURRENT RTL)
+==============================================================================
+  Module / Metric (Measured Live on Current RTL)       | Value
+  ----------------------------------------------------------------------------
+  chronos_log_zoh_unit Local Gate Cells                : 1,288 cells
+  chronos_log_zoh_unit Total Hierarchical Gate Cells   : 1,288 cells
+  chronos_log_zoh_unit Longest Topological Path (LTP)  : 71 gate levels
+  chronos_log_antilog_s16 Gate Cells / LTP             : 557 cells / 30 levels
+  chronos_lod_s16 Gate Cells / LTP                     : 276 cells / 28 levels
+  chronos_lod_u8 Gate Cells / LTP                      : 90 cells / 12 levels
+  chronos_pwl_nonlinear Gate Cells / LTP               : 628 cells / 49 levels
+  chronos_ssm_core_1lane (Engine B) LOD8 Instances     : 6 instances
+  chronos_ssm_core_1lane (Engine B) Local Gate Cells   : 7,050 cells
+  chronos_ssm_core_1lane (Engine B) Total Gate Cells   : 7,050 cells
+  chronos_soc_top Full-SoC RTL Primitives ($mul count) : 7,128 cells (0-DSP Verified: True)
+  Reference Linear INT16/8 Mamba Core Gate Cells / LTP : 5,682 cells / 359 levels (6x MUL)
+  ----------------------------------------------------------------------------
+
+==============================================================================
+ 3. THEOREM 1 ANALYTICAL DRIFT BOUND & PARETO DSE (M in {3..8} bits)
+==============================================================================
+  Method                          | Mean Drift Bias | 1,000-Step RMSE | Reduction
+  ----------------------------------------------------------------------------
+  Mitchell Truncation (Baseline)  |       -0.046121 |        0.047579 |   Baseline
+  CHRONOS 0.5-ULP Unbiased LUT6   |       -0.000083 |        0.001387 |  - 97.1%
+  CHRONOS 0.5-ULP + 1st-Order ΔΣ  |       +0.000000 |        0.000283 |  - 99.4%
+  ----------------------------------------------------------------------------
+  M (bits) | LUT Entries | Log2 MRE (%) | Antilog MRE (%) | Est. LUT6/PE | Pareto Status
+  --------------------------------------------------------------------------------------
+         3 |           8 |      24.0068 |          4.3914 |           36 | Under-accurate (High Drift)
+         4 |          16 |      15.7005 |          2.0524 |           38 | Under-accurate (High Drift)
+         5 |          32 |       8.4202 |          1.0353 |           40 | Under-accurate (High Drift)
+         6 |          64 |       4.9324 |          0.5583 |           42 | ★ PARETO KNEE (Optimal 1x LUT6/bit)
+         7 |         128 |       2.5950 |          0.2729 |           60 | Exponential LUT area blowup
+         8 |         256 |       1.3887 |          0.1345 |          100 | Exponential LUT area blowup
+  --------------------------------------------------------------------------------------
