@@ -1,35 +1,41 @@
 // ============================================================================
 // Project: CHRONOS — Zero-DSP Logarithmic Selective State-Space Hardware Engine
 // File   : rtl/arith/chronos_log_zoh_unit.sv
-// Desc   : ★ Q1 CORE INNOVATION 1 — Zero-DSP CSD-Fused Log-ZOH Discretizer ★
-//          Computes log2(A_bar) = -|Delta * A| * log2(e) entirely without DSPs
-//          or hardware exp() units!
+// Desc   : ★ Q1 CORE INNOVATION 1 — Log-Constant-Fused Zero-DSP Log-ZOH Unit ★
+//          Computes decay_log2 = |log2(A_bar)| = Δ * |A| * log2(e) without DSPs,
+//          without exp() LUTs, and WITHOUT a post-Antilog CSD adder tree!
 //
-//          Inputs:
-//            - delta_q2_6_i   : Unsigned 8-bit Q2.6 time-step Δ_d[t] (value = raw/64)
-//            - a_log_q3_6_i   : Unsigned 9-bit Q3.6 log2(|A_{d,n}| * 16) (pre-encoded)
-//                               where |A_{d,n}| is Q4.4 -> raw_A = |A|*16,
-//                               so log2(raw_delta) + log2(raw_A) = log2(Δ*|A|*1024)
-//            - lyap_guard_i   : Enforce spectral stability |A_bar| <= 2^(-1/64) < 1
-//          Output:
-//            - decay_log2_o   : Unsigned 10-bit Q4.6 representing |log2(A_bar)| >= 0
-//                               Ready to be SUBTRACTED directly from log2(|h[t-1]|)!
-//
-//          CSD Constant Approximation:
-//            log2(e) = 1.44269504...
-//            CSD     = 1 + 2^-1 - 2^-4 + 2^-8 + 2^-10 = 1.44238281 (err < 0.022%!)
+//          Key Mathematical & Critical-Path Breakthrough (v1.1.0):
+//            Instead of computing p = Antilog(log2(Δ) + log2(|A|)) and then
+//            passing p through a slow 5-term 26-bit CSD shift-add tree to
+//            multiply by log2(e) = 1.442695, we fuse log2(log2(e)) directly
+//            into the log-domain exponent sum BEFORE the Antilog decoder:
+//              log2(decay_log2) = log2(Δ) + log2(|A|) + log2(log2(e))
+//            In Q5.6 fixed-point (scale = 64):
+//              round(log2(log2(e)) * 64) = round(0.528766 * 64) = +34
+//            Combined with the Q-format alignment offset (-256), the net
+//            compile-time constant offset is -256 + 34 = -222 (or -256 if
+//            +34 is pre-fused offline into A_log in Bank 3).
+//            This eliminates the entire 5-term 26-bit CSD adder tree from
+//            Stage 1's critical path!
 // ============================================================================
 
 `timescale 1ns / 1ps
 
 (* use_dsp = "no" *)
-module chronos_log_zoh_unit (
+module chronos_log_zoh_unit #(
+    parameter bit A_LOG_PREFUSED = 1'b0 // 0: fuse +34 in RTL (-222); 1: +34 pre-added in Bank 3 A_log (-256)
+)(
     input  logic        [7:0] delta_q2_6_i,   // Unsigned Q2.6 (0..3.984)
     input  logic        [8:0] a_log_q3_6_i,   // Pre-encoded Q3.6 log2(|A|*16)
     input  logic              a_zero_i,       // 1 if A == 0
     input  logic              lyap_guard_i,   // 1 = enforce Lyapunov spectral stability
     output logic        [9:0] decay_log2_o    // Unsigned Q4.6 |log2(exp(-Δ*|A|))|
 );
+
+    localparam logic signed [10:0] LOG2_LOG2E_Q5_6 = 11'sd34; // round(log2(log2(e)) * 64)
+    localparam logic signed [10:0] ZOH_EXP_OFFSET  = A_LOG_PREFUSED ? -11'sd256
+                                                                    : (-11'sd256 + LOG2_LOG2E_Q5_6); // -222
 
     // Step 1: Encode positive unsigned Δ_d[t] into Q3.6 log2(delta_raw)
     logic       delta_zero;
@@ -94,54 +100,34 @@ module chronos_log_zoh_unit (
 
     assign delta_log_q3_6 = delta_zero ? 9'd0 : {d_exp, d_lut_frac};
 
-    // Step 2: Log-domain product Δ * |A| in Q4.6 (offset = -4 because raw_delta*raw_A has scale 2^10,
-    // and we want linear result in Q4.6 which has scale 2^6 -> shift right by 4 in exponent!)
-    logic signed [10:0] log_prod_q5_6;
-    logic signed [15:0] da_lin_q4_6;
+    // Step 2: Direct Log-Fused Product Δ * |A| * log2(e) in Q4.6!
+    //         Single 11-bit addition + 1 Antilog16 look-up (0 CSD adder tree!)
+    logic signed [10:0] log_fused_q5_6;
+    logic signed [15:0] decay_lin_q4_6;
 
-    assign log_prod_q5_6 = $signed({2'b00, delta_log_q3_6})
-                         + $signed({2'b00, a_log_q3_6_i})
-                         - 11'sd256; // -4.0 in Q5.6 (4 * 64 = 256)
+    assign log_fused_q5_6 = $signed({2'b00, delta_log_q3_6})
+                          + $signed({2'b00, a_log_q3_6_i})
+                          + ZOH_EXP_OFFSET;
 
     chronos_log_antilog_s16 u_da_antilog (
         .sign_i    ( 1'b0                  ),
         .zero_i    ( delta_zero | a_zero_i ),
-        .log_val_i ( log_prod_q5_6         ),
-        .lin_o     ( da_lin_q4_6           )
+        .log_val_i ( log_fused_q5_6        ),
+        .lin_o     ( decay_lin_q4_6        )
     );
 
-    // Step 3: Exact 5-Term CSD Shift-Add Multiplication by log2(e) = 1.4423828
-    //   log2(e) ≈ 1 + 2^-1 - 2^-4 + 2^-8 + 2^-10  (0 DSP, err < 0.022%!)
-    //   Compute in extended precision (10 fractional guard bits) then round!
-    logic [25:0] x_ext;
-    logic [25:0] csd_scaled;
-    logic [25:0] csd_rounded_wide;
-    logic [15:0] decay_rounded;
+    wire _unused_zoh = &{1'b0, decay_lin_q4_6[15]};
 
-    wire _unused_zoh = &{1'b0, da_lin_q4_6[15], csd_rounded_wide[9:0]};
-
+    // Step 3: Lyapunov Spectral Stability Guard (|A_bar| <= 2^(-1/64) < 1)
     always_comb begin
-        x_ext = {1'b0, da_lin_q4_6[14:0], 10'd0};
-        // 1*x + (x>>1) - (x>>4) + (x>>8) + (x>>10)
-        csd_scaled = x_ext
-                   + (x_ext >> 1)
-                   - (x_ext >> 4)
-                   + (x_ext >> 8)
-                   + (x_ext >> 10);
-
-        // Round-to-nearest back to Q4.6
-        csd_rounded_wide = csd_scaled + 26'd512;
-        decay_rounded    = csd_rounded_wide[25:10];
-
         if (delta_zero || a_zero_i) begin
             decay_log2_o = lyap_guard_i ? chronos_pkg::MIN_LYAP_DECAY : 10'd0;
-        end else if (decay_rounded > 16'd1023) begin
+        end else if (decay_lin_q4_6[14:0] > 15'd1023) begin
             decay_log2_o = 10'd1023; // Max decay (>= 16 bits shift -> exact zero)
-        end else if (lyap_guard_i && (decay_rounded[9:0] < chronos_pkg::MIN_LYAP_DECAY)) begin
-            // Hardware Lyapunov Spectral Stability Clamp: guarantees |A_bar| < 1.0
+        end else if (lyap_guard_i && (decay_lin_q4_6[9:0] < chronos_pkg::MIN_LYAP_DECAY)) begin
             decay_log2_o = chronos_pkg::MIN_LYAP_DECAY;
         end else begin
-            decay_log2_o = decay_rounded[9:0];
+            decay_log2_o = decay_lin_q4_6[9:0];
         end
     end
 

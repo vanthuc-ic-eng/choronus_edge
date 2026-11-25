@@ -234,17 +234,36 @@ module chronos_ssm_core_1lane #(
     end
 
     // ========================================================================
-    // STAGE 2 (Dual Unbiased Antilog -> State h[t] Update -> Bank 1 Writeback)
+    // STAGE 2 (Dual Unbiased Antilog + 1st-Order Delta-Sigma Error-Feedback
+    //          -> State h[t] Update -> Bank 1 0-Bubble Port B Writeback)
     // ========================================================================
+    // ★ Q1 UPGRADE (v1.1.0): Sub-LSB Fractional Remainder extraction &
+    //   1st-Order Delta-Sigma (ΔΣ) Error-Feedback across recurrent steps t-1 -> t!
+    //   Instead of losing sub-LSB fractional bits during right-shift in Stage 2,
+    //   we extract the 4-bit sub-LSB remainder (in units of 1/16 LSB of Q5.10)
+    //   from the decayed state branch and accumulate it with the 1st-order ΔΣ
+    //   error residual register ds_err_q[addr], shaping low-frequency drift
+    //   noise via H_e(z) = (1 - z^-1)/(1 - A_bar*z^-1) -> 0 at DC!
     logic signed [15:0] s2_h_decayed_lin;
     logic signed [15:0] s2_bx_lin;
     logic signed [16:0] s2_h_sum_17;
     logic signed [15:0] s2_h_new_clamped;
 
+    // 1st-Order Delta-Sigma Sub-LSB Remainder Accumulator (8 state lanes n=0..7)
+    logic signed [4:0]  s2_dec_sub_q4;
+    logic signed [4:0]  s2_bx_sub_q4;
+    logic signed [5:0]  ds_err_n_q [0:7];
+    logic signed [6:0]  s2_frac_acc_q4;
+    logic signed [1:0]  s2_ds_carry;
+    logic signed [5:0]  s2_ds_rem_next;
+    logic        [2:0]  s2_n_idx;
+
+    assign s2_n_idx = s1_addr_q[2:0];
+
     chronos_log_antilog_s16 u_antilog_decay (
-        .sign_i    ( s1_h_sign_q    ),
-        .zero_i    ( s1_h_zero_q    ),
-        .log_val_i ( s1_h_dec_log_q ),
+        .sign_i    ( s1_h_sign_q      ),
+        .zero_i    ( s1_h_zero_q      ),
+        .log_val_i ( s1_h_dec_log_q   ),
         .lin_o     ( s2_h_decayed_lin )
     );
 
@@ -255,15 +274,57 @@ module chronos_ssm_core_1lane #(
         .lin_o     ( s2_bx_lin    )
     );
 
+    // 1st-Order Delta-Sigma (ΔΣ) Sub-LSB Error-Feedback across recurrent steps t-1 -> t:
+    // Extracts fine sub-LSB quantization residual when right-shifting small exponents
+    // (exp_int < 8) and shapes low-frequency drift noise via H_e(z) = (1 - z^-1)/(1 - A_bar*z^-1).
     always_comb begin
+        if (s1_h_zero_q || s1_h_dec_log_q[10] || (s1_h_dec_log_q[9:6] >= 4'd8))
+            s2_dec_sub_q4 = 5'sd0;
+        else
+            s2_dec_sub_q4 = s1_h_sign_q ? -$signed({2'b00, s1_h_dec_log_q[2:0]}) + 5'sd3
+                                        :  $signed({2'b00, s1_h_dec_log_q[2:0]}) - 5'sd3;
+
+        if (s1_bx_zero_q || s1_bx_log_q[10] || (s1_bx_log_q[9:6] >= 4'd8))
+            s2_bx_sub_q4 = 5'sd0;
+        else
+            s2_bx_sub_q4 = s1_bx_sign_q ? -$signed({2'b00, s1_bx_log_q[2:0]}) + 5'sd3
+                                        :  $signed({2'b00, s1_bx_log_q[2:0]}) - 5'sd3;
+
+        s2_frac_acc_q4 = {ds_err_n_q[s2_n_idx][5], ds_err_n_q[s2_n_idx]}
+                       + {{2{s2_dec_sub_q4[4]}}, s2_dec_sub_q4}
+                       + {{2{s2_bx_sub_q4[4]}},  s2_bx_sub_q4};
+
+        if (s2_frac_acc_q4 >= 7'sd16) begin
+            s2_ds_carry    = 2'sd1;
+            s2_ds_rem_next = s2_frac_acc_q4[5:0] - 6'sd16;
+        end else if (s2_frac_acc_q4 <= -7'sd16) begin
+            s2_ds_carry    = -2'sd1;
+            s2_ds_rem_next = s2_frac_acc_q4[5:0] + 6'sd16;
+        end else begin
+            s2_ds_carry    = 2'sd0;
+            s2_ds_rem_next = s2_frac_acc_q4[5:0];
+        end
+
         s2_h_sum_17 = {s2_h_decayed_lin[15], s2_h_decayed_lin}
-                    + {s2_bx_lin[15],        s2_bx_lin};
+                    + {s2_bx_lin[15],        s2_bx_lin}
+                    + {{15{s2_ds_carry[1]}}, s2_ds_carry};
         if (s2_h_sum_17 > 17'sd32767)
             s2_h_new_clamped = 16'sd32767;
         else if (s2_h_sum_17 < -17'sd32767)
             s2_h_new_clamped = -16'sd32767;
         else
             s2_h_new_clamped = s2_h_sum_17[15:0];
+    end
+
+    always_ff @(posedge clk_gated or negedge rst_ni) begin
+        if (!rst_ni) begin
+            ds_err_n_q[0] <= 6'sd0; ds_err_n_q[1] <= 6'sd0;
+            ds_err_n_q[2] <= 6'sd0; ds_err_n_q[3] <= 6'sd0;
+            ds_err_n_q[4] <= 6'sd0; ds_err_n_q[5] <= 6'sd0;
+            ds_err_n_q[6] <= 6'sd0; ds_err_n_q[7] <= 6'sd0;
+        end else if (s1_valid_q && (s1_submode_q == 1'b0)) begin
+            ds_err_n_q[s2_n_idx] <= s2_ds_rem_next;
+        end
     end
 
     // Direct 0-Bubble Writeback to Bank 1 Port B (registered output aligns cleanly)

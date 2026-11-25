@@ -3,7 +3,7 @@
 ======================================================================
 [TEST 1] LOD8+Antilog16 (256 pts) : MRE = 0.051%, MaxRelErr = 1.087%
 [TEST 2] LOD16+Antilog16 (468 pts): MRE = 0.380%, MaxRelErr = 1.170%
-[TEST 3] Log-ZOH exp(-dA) (66 pts): MAE = 0.0013, MaxAbsErr = 0.0044
+[TEST 3] Log-ZOH exp(-dA) (66 pts): MAE = 0.0014, MaxAbsErr = 0.0053
 [TEST 3b] Lyapunov Spectral Guard : PASS (decay_log2=1 >= 1 when delta=0)
 [TEST 4a] PWL SiLU(z) (255 pts)   : MAE = 0.0167, MaxAbsErr = 0.0531 (1 LSB=0.0625)
 [TEST 4b] PWL Softplus(u) (184 pts): MAE = 0.0133, MaxAbsErr = 0.0506
@@ -15,12 +15,12 @@
 ======================================================================
   CHRONOS TB 2: 1,000-STEP LONG-SEQUENCE NUMERICAL DRIFT PROOF
 ======================================================================
-[STEP 999] Fused y_d  : FP64 = -0.3165, HW = -0.3105
+[STEP 999] Fused y_d  : FP64 = -0.3165, HW = -0.3096
 [STEP 999] Gated out_d: FP64 = -0.3881, HW = -0.3750
 ----------------------------------------------------------------------
   1,000-STEP x 4-STATE (4000 updates) DRIFT TELEMETRY:
-    Mean Signed Drift Bias : 0.000040 (target |bias| < 0.015)
-    Long-Sequence RMSE     :  0.020896 (target RMSE   < 0.035)
+    Mean Signed Drift Bias : -0.000014 (target |bias| < 0.015)
+    Long-Sequence RMSE     :  0.020915 (target RMSE   < 0.035)
     Worst-Case Abs Error   :  0.103599 (range [-32, +32])
 ----------------------------------------------------------------------
   [PASS] ZERO-DRIFT LYAPUNOV STABILITY PROVEN OVER 1,000 STEPS!
